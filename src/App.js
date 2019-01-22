@@ -1,26 +1,29 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import {
+  Footer
+} from "mdbreact";
 import './App.css';
+import Routes from './Routes';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Router>
+        <div>
+        <main>
+          <Routes />
+        </main>
+        <Footer color="indigo">
+            <p className="footer-copyright mb-0 py-3 text-center">
+              &copy; {new Date().getFullYear()} Copyright:{" "}
+              <a href="https://www.muzzlab.com"> Muzzlab.com </a>
+            </p>
+          </Footer>
+          </div>
+      </Router>
+
     );
   }
 }
