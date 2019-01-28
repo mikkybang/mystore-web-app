@@ -1,64 +1,143 @@
-import React from "react";
-import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBInput } from 'mdbreact';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { registerUser } from '../../Redux/actions/authentication';
 
-const Register = () => {
-    return (
-        <MDBContainer>
-            <MDBRow>
-                <MDBCol md="6">
-                    <form>
-                        <p className="h5 text-center mb-4">Sign up</p>
-                        <div className="grey-text">
-                            <MDBInput
-                                label="Your name"
-                                icon="user"
-                                group
-                                name="name"
-                                type="text"
-                                validate
-                                error="wrong"
-                                success="right"
-                            />
-                            <MDBInput
-                                label="Your email"
-                                icon="envelope"
-                                group
-                                name="email"
-                                type="email"
-                                validate
-                                error="wrong"
-                                success="right"
-                            />
-                            <select className="browser-default custom-select">
-                                <option selected>Kindly Select your type</option>
-                                <option value="Buyer">Buyer</option>
-                                <option value="Seller">Seller</option>
-                            </select>
-                            <MDBInput
-                                label="Your password"
-                                icon="lock"
-                                group
-                                name="password"
-                                type="password"
-                                validate
-                            />
-                            <MDBInput
-                                label="Confirm your password"
-                                icon="lock"
-                                group
-                                name="password-confirm"
-                                type="password"
-                                validate
-                            />
-                        </div>
-                        <div className="text-center">
-                            <MDBBtn color="primary">Register</MDBBtn>
-                        </div>
-                    </form>
-                </MDBCol>
-            </MDBRow>
-        </MDBContainer>
-    );
+class Register extends Component {
+
+    constructor() {
+        super();
+        this.state = {
+            name: '',
+            email: '',
+            type: '',
+            password: '',
+            password_confirm: '',
+            errors: {}
+        }
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleInputChange(e) {
+        registerUser()
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        const user = {
+            name: this.state.name,
+            email: this.state.email,
+            type: this.state.type,
+            password: this.state.password,
+            password_confirm: this.state.password_confirm,
+            errors: {}
+        }
+        this.props.registerUser(user, this.props.history);
+        console.log(user);
+    }
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.auth.isAuthenticated) {
+            this.props.history.push('/')
+        }
+        if (nextProps.errors) {
+            this.setState({
+                errors: nextProps.errors
+            });
+        }
+    }
+    componentDidMount() {
+        if(this.props.auth.isAuthenticated) {
+            this.props.history.push('/');
+        }
+    }
+
+
+    render() {
+        const { errors } = this.state
+        return (
+            <div className="container" style={{ marginTop: '50px', width: '700px' }}>
+                <h2 style={{ marginBottom: '40px' }}>Registration</h2>
+                <form onSubmit={this.handleSubmit}>
+                    <div className="form-group">
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            className="form-control"
+                            name="name"
+                            onChange={this.handleInputChange}
+                            value={this.state.name}
+                        />
+                        {errors.param && (<div className="invalid-feedback">{errors.msg}</div>)}
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            className="form-control"
+                            name="email"
+                            onChange={this.handleInputChange}
+                            value={this.state.email}
+                        />
+                        {errors.param && (<div className="invalid-feedback">{errors.msg}</div>)}
+                    </div>
+                    <div className="form-group">
+                        <select className="browser-default custom-select"
+                            name="type"
+                            onChange={this.handleInputChange}
+
+                        >
+                            <option defaultValue="Kindly Select your type">Kindly Select your type</option>
+                            <option value="Buyer">Buyer</option>
+                            <option value="Seller">Seller</option>
+                        </select>
+
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            className="form-control"
+                            name="password"
+                            onChange={this.handleInputChange}
+                            value={this.state.password}
+                        />
+                        {errors.param && (<div className="invalid-feedback">{errors.msg}</div>)}
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            className="form-control"
+                            name="password_confirm"
+                            onChange={this.handleInputChange}
+                            value={this.state.password_confirm}
+                        />
+                         {errors.param && (<div className="invalid-feedback">{errors.msg}</div>)}
+                    </div>
+                    <div className="form-group">
+                        <button type="submit" className="btn btn-primary">
+                            Register User
+                    </button>
+                    </div>
+                </form>
+            </div>
+        )
+    }
+}
+
+Register.propTypes = {
+    registerUser: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired
 };
 
-export default Register;
+const mapStateToProps = state => ({
+    auth: state.auth,
+    errors: state.errors
+});
+
+export default connect(mapStateToProps, { registerUser })(withRouter(Register));

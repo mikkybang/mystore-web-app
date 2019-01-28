@@ -1,72 +1,99 @@
-import React from "react";
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBModalFooter,
-  MDBIcon,
-  MDBCardHeader,
-  MDBBtn,
-  MDBInput
-} from "mdbreact";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { loginUser } from '../../Redux/actions/authentication';
 
-const Login = () => {
-  return (
-     
-    <MDBContainer>
-      <MDBRow>
-        <MDBCol md="6">
-          <MDBCard>
-            <MDBCardBody>
-              <MDBCardHeader className="form-header deep-blue-gradient rounded">
-                <h3 className="my-3">
-                  <MDBIcon icon="lock" /> Login:
-                </h3>
-              </MDBCardHeader>
-              <form>
-                <div className="grey-text">
-                  <MDBInput
-                    label="Type your email"
-                    icon="envelope"
-                    group
+class Login extends Component {
+
+    constructor() {
+        super();
+        this.state = {
+            email: '',
+            password: '',
+            errors: {}
+        }
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleInputChange(e) {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        const user = {
+            email: this.state.email,
+            password: this.state.password,
+        }
+        this.props.loginUser(user);
+        console.log(user);
+    }
+
+    componentDidMount() {
+        if(this.props.auth.isAuthenticated) {
+            this.props.history.push('/');
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.auth.isAuthenticated) {
+            this.props.history.push('/')
+        }
+        if(nextProps.errors) {
+            this.setState({
+                errors: nextProps.errors
+            });
+        }
+    }
+
+    render() {
+        return(
+        <div className="container" style={{ marginTop: '50px', width: '700px'}}>
+            <h2 style={{marginBottom: '40px'}}>Login</h2>
+            <form onSubmit={ this.handleSubmit }>
+                <div className="form-group">
+                    <input
                     type="email"
-                    validate
-                    error="wrong"
-                    success="right"
-                  />
-                  <MDBInput
-                    label="Type your password"
-                    icon="lock"
-                    group
+                    placeholder="Email"
+                    className="form-control"
+                    name="email"
+                    onChange={ this.handleInputChange }
+                    value={ this.state.email }
+                    />
+                </div>
+                <div className="form-group">
+                    <input
                     type="password"
-                    validate
-                  />
+                    placeholder="Password"
+                    className="form-control"
+                    name="password"
+                    onChange={ this.handleInputChange }
+                    value={ this.state.password }
+                    />
                 </div>
-
-              <div className="text-center mt-4">
-                <MDBBtn
-                  color="light-blue"
-                  className="mb-3"
-                  type="submit"
-                >
-                  Login
-                </MDBBtn>
-              </div>
-              </form>
-              <MDBModalFooter>
-                <div className="font-weight-light">
-                  <p>Not a member? Sign Up</p>
-                  <p>Forgot Password?</p>
+                <div className="form-group">
+                    <button type="submit" className="btn btn-primary">
+                        Login User
+                    </button>
                 </div>
-              </MDBModalFooter>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-      </MDBRow>
-    </MDBContainer>
-  );
-};
+            </form>
+        </div>
+        )
+    }
+}
 
-export default Login;
+Login.propTypes = {
+    loginUser: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+    errors: state.errors
+})
+
+export  default connect(mapStateToProps, { loginUser })(Login)
