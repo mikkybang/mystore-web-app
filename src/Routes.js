@@ -5,6 +5,7 @@ import NotFound from './components/NotFound/NotFound';
 import Home from './components/Home/Home';
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register"
+import Dashboard from "./components/Dashboard/Dashboard"
 class Routes extends React.Component {
     render(){
         return(
@@ -13,6 +14,7 @@ class Routes extends React.Component {
             <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
+            <Route path ="/dashboard" component={Dashboard} />
             <Route path="*" component={NotFound} />
             </Switch>
         )

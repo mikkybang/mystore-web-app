@@ -8,7 +8,10 @@ import createHistory from 'history/createBrowserHistory';
 export const history = createHistory();
 
 
-class Dashboard extends Component {
+class StoreForm extends Component {
+    constructor(props){
+        super(props);
+    }
 
     componentWillMount() {
         if (!this.props.auth.isAuthenticated) {
@@ -41,8 +44,8 @@ class Dashboard extends Component {
     }
 }
 
-Dashboard.propTypes = {
-    auth: PropTypes.object.isRequired
+StoreForm.propTypes = {
+
 }
 
 const mapStateToProps = (state) => ({
@@ -50,4 +53,4 @@ const mapStateToProps = (state) => ({
     profile: state.user.profile
 })
 
-export default connect(mapStateToProps, { getUserProfile })(withRouter(Dashboard));
+export default connect(mapStateToProps, { getUserProfile })(withRouter(StoreForm));
