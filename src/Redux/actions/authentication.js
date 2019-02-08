@@ -3,11 +3,19 @@ import types from '../types';
 import setAuthToken from '../../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
 
+import createHistory from 'history/createBrowserHistory';
+
+export const history = createHistory();
+
 export const registerUser = (user, history) => dispatch => {
     axios.post('/user/register', user)
             .then(res =>{
-                console.log(res)
-                history.push('/login')})
+                const { token } = res.data;
+                localStorage.setItem('jwtToken', token);
+                setAuthToken(token);
+                const decoded = jwt_decode(token);
+                dispatch(setCurrentUser(decoded));
+                console.log(res.data);})
             .catch(err => {
                 console.log(err.response.data)
                 dispatch({

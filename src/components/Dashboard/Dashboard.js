@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { getUserProfile } from '../../Redux/actions/user';
+import { getSellerProfile } from '../../Redux/actions/seller';
 import createHistory from 'history/createBrowserHistory';
+import StoreForm from '../StoreForm/StoreForm'
 
 export const history = createHistory();
 
@@ -14,7 +15,7 @@ class Dashboard extends Component {
         if (!this.props.auth.isAuthenticated) {
             this.props.history.push('/login');
         }
-        this.props.getUserProfile(this.props.auth.user.email);
+        this.props.getSellerProfile(this.props.auth.user.email);
     }
 
 
@@ -24,7 +25,7 @@ class Dashboard extends Component {
 
 
         return (
-            <div>
+            <div className="container">
                 {user.email}
                 <br />
                 name:
@@ -32,7 +33,9 @@ class Dashboard extends Component {
                 <br />
                 {this.props.profile.type}
                 <br />
-                
+                <div className="container">
+                <StoreForm />
+                </div>
 
 
                 Dashboard Component
@@ -50,4 +53,4 @@ const mapStateToProps = (state) => ({
     profile: state.user.profile
 })
 
-export default connect(mapStateToProps, { getUserProfile })(withRouter(Dashboard));
+export default connect(mapStateToProps, { getSellerProfile })(withRouter(Dashboard));
